@@ -182,9 +182,9 @@ class VideoQualityApp:
         self.console_text.insert(tk.END, "\n=== Запуск SSIM ===\n")
         ssim_cmd = [
             "ffmpeg",
-            "-i", self.enc_video_path,
             "-i", self.ref_video_path,
-            "-lavfi", "ssim=stats_file=ssim.log",
+            "-i", self.enc_video_path,
+            "-lavfi", "[0:v]setpts=PTS-STARTPTS[ref];[1:v]setpts=PTS-STARTPTS[enc];[ref][enc]ssim=stats_file=ssim.log",
             "-f", "null", "-"
         ]
         if self.run_ffmpeg_command(ssim_cmd):
@@ -205,9 +205,9 @@ class VideoQualityApp:
         self.console_text.insert(tk.END, "\n=== Запуск PSNR ===\n")
         psnr_cmd = [
             "ffmpeg",
-            "-i", self.enc_video_path,
             "-i", self.ref_video_path,
-            "-lavfi", "psnr=stats_file=psnr.log",
+            "-i", self.enc_video_path,
+            "-lavfi", "[0:v]setpts=PTS-STARTPTS[ref];[1:v]setpts=PTS-STARTPTS[enc];[ref][enc]psnr=stats_file=psnr.log",
             "-f", "null", "-"
         ]
         if self.run_ffmpeg_command(psnr_cmd):
@@ -228,9 +228,9 @@ class VideoQualityApp:
         self.console_text.insert(tk.END, "\n=== Запуск VMAF ===\n")
         vmaf_cmd = [
             "ffmpeg",
-            "-i", self.enc_video_path,
             "-i", self.ref_video_path,
-            "-lavfi", "[0][1]libvmaf=n_threads=32:log_path=log.json",
+            "-i", self.enc_video_path,
+            "-lavfi", "[0:v]setpts=PTS-STARTPTS[ref];[1:v]setpts=PTS-STARTPTS[enc];[ref][enc]libvmaf=n_threads=32:log_path=log.json",
             "-f", "null", "-"
         ]
         if self.run_ffmpeg_command(vmaf_cmd):
